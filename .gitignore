@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+dist/
+test-results/
+tests/frontend-qa.png
+*.log
+audio_runtime/
+models/
+input/
+output/
+temp/
+.env
+.env.*

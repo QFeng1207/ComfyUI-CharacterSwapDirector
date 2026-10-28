@@ -1,0 +1,46 @@
+name: Build and publish release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - pyproject.toml
+      - .github/workflows/release.yml
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read package version
+        id: version
+        run: |
+          python -c 'import tomllib; v=tomllib.load(open("pyproject.toml","rb"))["project"]["version"]; print("tag=v"+v)' >> "$GITHUB_OUTPUT"
+      - name: Build distributable and verify checksums
+        run: python tools/build_release.py
+      - name: Publish version and assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: |
+          if gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            echo "Release already exists; preserving its assets."
+            exit 0
+          fi
+          gh release create "$RELEASE_TAG" dist/* \
+            --target "$RELEASE_COMMIT" \
+            --title "H3 人物替换导演台 $RELEASE_TAG" \
+            --notes-file RELEASE_NOTES.md

@@ -1,0 +1,6 @@
+# Use setup_dependencies.py or pip --no-deps --no-build-isolation.
+# Torch, torchvision, NumPy, Pillow, PyYAML, tqdm and typing_extensions come from ComfyUI.
+av>=18.1.0,<19
+imageio-ffmpeg>=0.6.0,<0.7
+# Only install this fallback when no existing cv2 provider is present.
+opencv-python-headless==4.11.0.86

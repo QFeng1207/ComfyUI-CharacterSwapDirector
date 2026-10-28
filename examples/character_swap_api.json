@@ -1,0 +1,142 @@
+{
+  "1": {
+    "class_type": "CSD_MaterialPlanner",
+    "inputs": {
+      "project_json": "{\"version\": 1, \"videos\": [], \"images\": [], \"roles\": [], \"frame_references\": [], \"settings\": {\"person_mode\": \"multi\", \"audio_mode\": \"original\", \"segment_mode\": \"auto\", \"max_segment_seconds\": 10, \"scene_threshold\": 0.2, \"trial\": {\"enabled\": false, \"video_id\": \"\", \"segment_id\": \"\"}, \"revision\": {\"enabled\": false, \"scope\": \"selected\", \"video_id\": \"\", \"base_result_id\": \"\", \"segment_ids\": []}, \"candidate\": {\"enabled\": false, \"video_id\": \"\", \"segment_id\": \"\", \"time\": 0}, \"resolution\": {\"enabled\": false, \"width\": 0, \"height\": 0}}, \"selected_video_id\": \"\", \"selected_role_id\": \"\"}"
+    },
+    "_meta": {
+      "title": "人物替换导演台 · v0.3.3"
+    }
+  },
+  "4": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "H3 Ref2VA 基础模型"
+    }
+  },
+  "6": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "shift_video": 12.0,
+      "shift_audio": 3.0,
+      "model": [
+        "4",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "H3 调度"
+    }
+  },
+  "7": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "Qwen3 VL 编码器"
+    }
+  },
+  "8": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_int8_convrot.safetensors"
+    },
+    "_meta": {
+      "title": "H3 视频 VAE"
+    }
+  },
+  "11": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 42
+    },
+    "_meta": {
+      "title": "随机种子"
+    }
+  },
+  "12": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    },
+    "_meta": {
+      "title": "原生参考采样器"
+    }
+  },
+  "13": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0,
+      "model": [
+        "6",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Ref2VA 20 步基线"
+    }
+  },
+  "14": {
+    "class_type": "CSD_RenderReferenceBatch",
+    "inputs": {
+      "processing_long_edge": 1344,
+      "frame_interpolation": "nearest",
+      "reference_image_size": "max",
+      "reference_sheet_mode": "auto",
+      "plan": [
+        "1",
+        0
+      ],
+      "model": [
+        "6",
+        0
+      ],
+      "clip": [
+        "7",
+        0
+      ],
+      "video_vae": [
+        "8",
+        0
+      ],
+      "noise": [
+        "11",
+        0
+      ],
+      "sampler": [
+        "12",
+        0
+      ],
+      "sigmas": [
+        "13",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "v0.3.3 · H3 全画面人物替换"
+    }
+  },
+  "15": {
+    "class_type": "CSD_SaveResults",
+    "inputs": {
+      "filename_prefix": "CharacterSwapH3",
+      "format": "lossless_mov",
+      "results": [
+        "14",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "保存版本与预览"
+    }
+  }
+}

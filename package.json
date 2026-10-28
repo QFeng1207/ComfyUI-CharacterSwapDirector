@@ -1,0 +1,12 @@
+{
+  "name": "comfyui-character-swap-director-tests",
+  "version": "0.3.3",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/frontend_state.test.mjs tests/frontend_browser.test.mjs",
+    "test:state": "node --test tests/frontend_state.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

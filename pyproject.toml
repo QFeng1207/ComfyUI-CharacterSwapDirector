@@ -1,0 +1,13 @@
+[project]
+name = "comfyui-character-swap-director"
+version = "0.3.3"
+description = "H3 full-frame character reference generation with timed corrected frames, segment revisions, and original or muted audio for ComfyUI."
+license = {text = "GPL-3.0-or-later"}
+requires-python = ">=3.11"
+
+[project.urls]
+Repository = "https://github.com/QFeng1207/ComfyUI-CharacterSwapDirector"
+Issues = "https://github.com/QFeng1207/ComfyUI-CharacterSwapDirector/issues"
+
+[tool.comfy]
+DisplayName = "Character Swap Director"
